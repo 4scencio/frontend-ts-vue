@@ -2,7 +2,15 @@
   <div class="users">
     <div class="container">
       <section>
-        <h1 class="title">Lista de Usuários</h1>
+        <h5 class="title">Novo Usuário</h5>
+        <form @submit.prevent="createUser">
+          <input type="text" placeholder="Nome" v-model="form.name">
+          <input type="text" placeholder="Email" v-model="form.email">
+          <button type="submit">Criar</button>
+        </form>
+      </section>
+      <section>
+        <h5 class="title">Lista de Usuários</h5>
         <ul>
           <li v-for="(user, index) in users" :key="index">
             <p>{{ user.name }}</p>
@@ -29,7 +37,11 @@ export default defineComponent({
   
   data() {
     return {
-      users: [] as User[]
+      users: [] as User[],
+      form: {
+        name: '',
+        email: ''
+      }
     }
   },
   created() {
@@ -37,8 +49,22 @@ export default defineComponent({
   },
   methods: {
     async fetchUsers() {
-      const { data } = await axios.get('/users')
-      this.users = data
+      try {
+        const { data } = await axios.get('/users')
+        this.users = data
+      } catch (error) {
+        console.warn(error)
+      }
+    },
+    async createUser() {
+      try {
+        const { data } = await axios.post('/user', this.form)
+        this.users.push = data
+        this.form.name = '',
+        this.form.email = ''
+      } catch (error) {
+        console.warn(error)
+      }
     }
   }
 })
