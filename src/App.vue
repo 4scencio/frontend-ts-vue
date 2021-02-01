@@ -4,6 +4,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import axios from '@/utils/axios'
 
 export default defineComponent({
   
@@ -11,6 +12,9 @@ export default defineComponent({
     return {
       name: 'Alessandro'
     }
+  },
+  methods: {
+    
   }
 })
 </script>
