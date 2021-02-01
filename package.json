@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "mini-toastr": "^0.8.1",
     "normalize.css": "^8.0.1",
     "vue": "^3.0.0"
   },

@@ -3,9 +3,12 @@
     <div class="container">
       <section>
         <h5 class="title">Novo Usuário</h5>
-        <div class="response">
-          <h5 class="subtitle btn-success">{{response}}</h5>
+        <br>
+        <div class="notification">
+          <h5 class="subtitle btn-success">{{success}}</h5>
+          <h5 class="subtitle btn-warning">{{error}}</h5>
         </div>
+        <br>
         <form @submit.prevent="createUser">
           <input type="text" placeholder="Nome" v-model="form.name">
           <input type="text" placeholder="Email" v-model="form.email">
@@ -37,7 +40,6 @@ interface User {
 }
 
 export default defineComponent({
-  
   data() {
     return {
       users: [] as User[],
@@ -45,7 +47,8 @@ export default defineComponent({
         name: '',
         email: ''
       },
-      response: ''
+      success: '',
+      error: '',
     }
   },
   created() {
@@ -65,16 +68,22 @@ export default defineComponent({
       const { name, email } = this.form
       try {
         const { data } = await axios.post('/user', {name, email})
+        
         this.users.push(data)
-        this.response = 'Usuário criado com sucesso'    
+        this.success = 'Usuário criado com sucesso'    
         
         setTimeout(() => {
-          this.response = ''
-        }, 5000)
+          this.success = ''
+        }, 4000)
 
         this.form.name = '',
         this.form.email = ''
       } catch (error) {
+        this.error = 'Preencha o formulário corretamente'
+
+        setTimeout(() => {
+          this.error = ''
+        }, 4000)
         console.warn(error)
       }
     },
@@ -85,6 +94,13 @@ export default defineComponent({
         const userIndex = this.users.findIndex(user => user.id === id)
 
         this.users.splice(userIndex, 1)
+
+        this.success = 'Usuário deletado com sucesso'    
+        
+        setTimeout(() => {
+          this.success = ''
+        }, 4000)     
+
       } catch (error) {
         console.warn(error)
       }
@@ -113,17 +129,41 @@ export default defineComponent({
 .subtitle {
   text-align: center;
   text-transform: uppercase;
-  font-size: 1rem;
+  font-size: 0.8rem;
   font-weight: 500;
   margin: 0.7rem 0;
 }
 
-.response {
+.notification {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   margin-bottom: 1em;
+}
+
+.btn-success {
+  position: absolute;
+  background-color: transparent;
+  color: #2ec229;;
+  border: none;
+  border-radius: 1rem;
+  padding: 0.6rem 1.5rem;
+  width: max-content;
+  transition: all 0.3s linear;
+  outline: none;
+}
+
+.btn-warning {
+  position: absolute;
+  background-color: transparent;
+  color: #ca1818;;
+  border: none;
+  border-radius: 1rem;
+  padding: 0.6rem 1.5rem;
+  width: max-content;
+  transition: all 0.3s linear;
+  outline: none;
 }
 
 form {
@@ -159,22 +199,6 @@ button {
 
 button:hover {
   background-color: #1b5cdc;
-}
-
-.btn-success {
-  background-color: transparent;
-  color: #2ec229;;
-  border: none;
-  border-radius: 1rem;
-  padding: 0.6rem 1.5rem;
-  width: max-content;
-  transition: all 0.3s linear;
-  outline: none;
-  cursor: pointer;
-}
-
-.btn-success:hover {
-    box-shadow: 0 0 5px 3px rgba(45, 108, 234, 0.3);
 }
 
 p {
