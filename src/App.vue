@@ -3,15 +3,16 @@
     <div class="container">
       <section>
         <h5 class="title">Novo Usuário</h5>
-        <br>
+        <br />
         <div class="notification">
-          <h5 class="subtitle btn-success">{{success}}</h5>
-          <h5 class="subtitle btn-warning">{{error}}</h5>
+          <h5 class="subtitle" :class="{ 'btn-success': success, 'btn-warning': error }">
+            {{ Msg }}
+          </h5>
         </div>
-        <br>
+        <br />
         <form @submit.prevent="createUser">
-          <input type="text" placeholder="Nome" v-model="form.name">
-          <input type="text" placeholder="Email" v-model="form.email">
+          <input type="text" placeholder="Nome" v-model="form.name" />
+          <input type="text" placeholder="Email" v-model="form.email" />
           <button type="submit">Criar</button>
         </form>
       </section>
@@ -24,7 +25,7 @@
             <a @click="deleteUser(user.id)" class="destroy" />
           </li>
         </ul>
-        </section>
+      </section>
     </div>
   </div>
 </template>
@@ -34,8 +35,8 @@ import { defineComponent } from 'vue'
 import axios from '@/utils/axios'
 
 interface User {
-  id: string,
-  name: string,
+  id: string
+  name: string
   email: string
 }
 
@@ -47,8 +48,9 @@ export default defineComponent({
         name: '',
         email: ''
       },
-      success: '',
-      error: '',
+      success: false,
+      error: false,
+      Msg: ''
     }
   },
   created() {
@@ -67,22 +69,24 @@ export default defineComponent({
     async createUser() {
       const { name, email } = this.form
       try {
-        const { data } = await axios.post('/user', {name, email})
-        
+        const { data } = await axios.post('/user', { name, email })
+
         this.users.push(data)
-        this.success = 'Usuário criado com sucesso'    
-        
+        this.error = false
+        this.success = true
+        this.Msg = 'Usuário criado com sucesso'
+
         setTimeout(() => {
-          this.success = ''
+          this.Msg = ''
         }, 4000)
-
-        this.form.name = '',
-        this.form.email = ''
+        ;(this.form.name = ''), (this.form.email = '')
       } catch (error) {
-        this.error = 'Preencha o formulário corretamente'
+        this.success = false
+        this.error = true
+        this.Msg = 'Preencha o formulário corretamente'
 
         setTimeout(() => {
-          this.error = ''
+          this.Msg = ''
         }, 4000)
         console.warn(error)
       }
@@ -91,16 +95,17 @@ export default defineComponent({
       try {
         await axios.delete(`/user/${id}`)
 
-        const userIndex = this.users.findIndex(user => user.id === id)
+        const userIndex = this.users.findIndex((user) => user.id === id)
 
         this.users.splice(userIndex, 1)
 
-        this.success = 'Usuário deletado com sucesso'    
-        
-        setTimeout(() => {
-          this.success = ''
-        }, 4000)     
+        this.success = false
+        this.error =  true
+        this.Msg = 'Usuário deletado com sucesso'
 
+        setTimeout(() => {
+          this.Msg = ''
+        }, 4000)
       } catch (error) {
         console.warn(error)
       }
@@ -145,7 +150,7 @@ export default defineComponent({
 .btn-success {
   position: absolute;
   background-color: transparent;
-  color: #2ec229;;
+  color: #2ec229;
   border: none;
   border-radius: 1rem;
   padding: 0.6rem 1.5rem;
@@ -157,7 +162,7 @@ export default defineComponent({
 .btn-warning {
   position: absolute;
   background-color: transparent;
-  color: #ca1818;;
+  color: #ca1818;
   border: none;
   border-radius: 1rem;
   padding: 0.6rem 1.5rem;
